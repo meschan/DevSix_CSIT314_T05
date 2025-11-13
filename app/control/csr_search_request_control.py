@@ -1,6 +1,7 @@
 # app/control/csr_search_request_control.py
 from types import SimpleNamespace
-from flask import render_template
+from typing import Any
+
 from ..extensions import request_repo, user_repo          # 你们全局注册的仓库实例（方案B）
 
 class CSRSearchRequestControl:
@@ -18,57 +19,33 @@ class CSRSearchRequestControl:
         else:
             items = []
 
-            def pick(obj, *names, default=""):
-                """从 obj（支持 dict / 对象）里依次取字段名；取不到返回 default。"""
-                if isinstance(obj, dict):
-                    for n in names:
-                        if n in obj and obj[n] is not None:
-                            return obj[n]
-                    return default
-                for n in names:
-                    if hasattr(obj, n):
-                        val = getattr(obj, n)
-                        if val is not None:
-                            return val
-                return default
+        return [self._to_view_model(item) for item in items]
 
-            rows = []
-            for r in items:
-                # 1) title：如果 r 就是字符串，直接用；否则从字段里取
-                if isinstance(r, str):
-                    title = r
-                    rid = ""
-                    category = ""
-                    desc = ""
-                    created_at = ""
-                    owner = ""
-                else:
-                    title = pick(r, "title", "name", default="")
-                    rid = pick(r, "id", "request_id", default="")
-                    category = pick(r, "category", "category_name", default="")
-                    desc = pick(r, "description", default="")
-                    created_at = pick(r, "created_at", default="")
-                    # owner：优先直接名字，其次用 id 查
-                    owner = (pick(r, "owner_username", "pin_username", "username", default="")
-                             or self._resolve_owner_by_id(pick(r, "owner_id", "user_id", default=None)))
+    def _to_view_model(self, obj: Any) -> SimpleNamespace:
+        if isinstance(obj, dict):
+            data = obj
+            pick = lambda *names, default="": next((data[n] for n in names if n in data and data[n] is not None), default)
+        else:
+            pick = lambda *names, default="": next((getattr(obj, n) for n in names if hasattr(obj, n) and getattr(obj, n) is not None), default)
 
-                rows.append(SimpleNamespace(
-                    id=rid,
-                    title=title,
-                    category=category,
-                    display_owner=owner or "",
-                    status=pick(r, "status", default="Open") if not isinstance(r, str) else "Open",
-                    description=desc,
-                    created_at=created_at,
-                ))
+        owner = pick("owner_username", "pin_username", "username", default="") or self._resolve_owner_by_id(
+            pick("owner_id", "user_id", "pin_user_id", default=None)
+        )
 
-            from flask import render_template
-            return render_template("csr_search_request.html", requests=rows)
+        return SimpleNamespace(
+            id=pick("id", "request_id", default=""),
+            title=pick("title", "name", default=""),
+            category=pick("category", "category_name", default=""),
+            display_owner=owner or "",
+            status=pick("status", default="Open"),
+            description=pick("description", default=""),
+            created_at=pick("created_at", default=""),
+        )
 
-        def _resolve_owner_by_id(self, uid):
-            if uid is None or not hasattr(self._user_repo, "get_by_id"):
-                return ""
-            u = self._user_repo.get_by_id(uid)
-            if not u:
-                return ""
-            return getattr(u, "username", "") or getattr(u, "email", "")
+    def _resolve_owner_by_id(self, uid):
+        if uid is None or not hasattr(self._user_repo, "get_by_id"):
+            return ""
+        user = self._user_repo.get_by_id(uid)
+        if not user:
+            return ""
+        return getattr(user, "username", "") or getattr(user, "email", "")
