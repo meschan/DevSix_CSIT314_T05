@@ -3,6 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from types import SimpleNamespace
 from typing import Iterable, List
+from typing import List
 
 from ..entity.request import Request
 from ..extensions import request_repo, csr_shortlist_repo, user_repo
@@ -45,6 +46,18 @@ class CSRShortlistControl:
         all_requests = list(self._iter_all_requests())
 
         # Present the newest opportunities first for easier review.
+        """Return the list of requests saved by the CSR representative."""
+
+        ids = self._shortlist_repo.get_all_ids(csr_user_id)
+        shortlisted_requests: List[Request] = []
+        for opportunity_id in ids:
+            try:
+                shortlisted_requests.append(self._request_repo.get(opportunity_id))
+            except KeyError:
+                # The request may have been deleted; skip silently.
+                continue
+
+        # Present the newest saved opportunities first for easier review.
         def sort_key(req: Request):
             created = getattr(req, "created_at", None)
             if isinstance(created, datetime):
@@ -64,6 +77,10 @@ class CSRShortlistControl:
         yield from []
 
     def _to_view_model(self, request: Request, is_saved: bool) -> SimpleNamespace:
+        shortlisted_requests.sort(key=sort_key, reverse=True)
+        return [self._to_view_model(req) for req in shortlisted_requests]
+
+    def _to_view_model(self, request: Request) -> SimpleNamespace:
         owner_name = ""
         if hasattr(self._user_repo, "get_by_id"):
             owner = self._user_repo.get_by_id(getattr(request, "pin_user_id", None))

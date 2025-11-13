@@ -68,3 +68,6 @@ def test_csr_shortlist_marks_unsaved_requests():
     second_row = next(row for row in results if row.id == second.id)
     assert first_row.is_saved is True
     assert second_row.is_saved is False
+    assert len(saved) == 1
+    assert saved[0].id == created.id
+    assert saved[0].pin_user_id == created.pin_user_id

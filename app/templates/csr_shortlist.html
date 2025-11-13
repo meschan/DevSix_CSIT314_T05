@@ -19,6 +19,10 @@
 
           {% if not requests %}
             <div class="alert alert-info">No volunteer opportunities are available at the moment.</div>
+          <p class="text-muted">Your shortlist of volunteer opportunities for future review.</p>
+
+          {% if not requests %}
+            <div class="alert alert-info">You have not saved any opportunities yet.</div>
           {% else %}
             <div class="table-responsive">
               <table class="table table-hover align-middle">

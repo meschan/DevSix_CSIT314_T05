@@ -31,6 +31,10 @@ class CSRSearchRequestControl:
 
         return sorted(view_models, key=sort_key, reverse=True)
 
+        return sorted(view_models, key=sort_key, reverse=True)
+
+        return [self._to_view_model(item) for item in items]
+
     def _to_view_model(self, obj: Any) -> SimpleNamespace:
         if isinstance(obj, dict):
             data = obj
