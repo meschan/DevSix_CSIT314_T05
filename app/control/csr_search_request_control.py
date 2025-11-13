@@ -1,4 +1,5 @@
 # app/control/csr_search_request_control.py
+from datetime import datetime
 from types import SimpleNamespace
 from typing import Any
 
@@ -19,6 +20,17 @@ class CSRSearchRequestControl:
         else:
             items = []
 
+        # Ensure deterministic ordering for the UI while keeping repository order intact
+        view_models = [self._to_view_model(item) for item in items]
+
+        def sort_key(row: SimpleNamespace):
+            created = getattr(row, "created_at", None)
+            if isinstance(created, datetime):
+                return created
+            return getattr(row, "id", 0)
+
+        return sorted(view_models, key=sort_key, reverse=True)
+
         return [self._to_view_model(item) for item in items]
 
     def _to_view_model(self, obj: Any) -> SimpleNamespace:
@@ -37,6 +49,7 @@ class CSRSearchRequestControl:
             title=pick("title", "name", default=""),
             category=pick("category", "category_name", default=""),
             display_owner=owner or "",
+            pin_user_id=pick("pin_user_id", "user_id", default=""),
             status=pick("status", default="Open"),
             description=pick("description", default=""),
             created_at=pick("created_at", default=""),

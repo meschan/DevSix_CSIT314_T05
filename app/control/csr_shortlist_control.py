@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import datetime
 from types import SimpleNamespace
 from typing import List
 
@@ -45,6 +46,15 @@ class CSRShortlistControl:
             except KeyError:
                 # The request may have been deleted; skip silently.
                 continue
+
+        # Present the newest saved opportunities first for easier review.
+        def sort_key(req: Request):
+            created = getattr(req, "created_at", None)
+            if isinstance(created, datetime):
+                return created
+            return getattr(req, "id", 0)
+
+        shortlisted_requests.sort(key=sort_key, reverse=True)
         return [self._to_view_model(req) for req in shortlisted_requests]
 
     def _to_view_model(self, request: Request) -> SimpleNamespace:
@@ -59,6 +69,7 @@ class CSRShortlistControl:
             title=getattr(request, "title", ""),
             category=getattr(request, "category", ""),
             display_owner=owner_name,
+            pin_user_id=getattr(request, "pin_user_id", ""),
             status=getattr(request, "status", "Open"),
             description=getattr(request, "description", ""),
             created_at=getattr(request, "created_at", ""),
