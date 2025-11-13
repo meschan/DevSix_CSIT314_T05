@@ -98,5 +98,8 @@ def create_app() -> Flask:
     from .boundary.csr_search_request import bp as csr_search_request_bp
     app.register_blueprint(csr_search_request_bp, url_prefix="/csr")
 
+    from .boundary.csr_shortlist import bp as csr_shortlist_bp
+    app.register_blueprint(csr_shortlist_bp, url_prefix="/csr")
+
     # Jinja globals / filters can be added here if needed
     return app
