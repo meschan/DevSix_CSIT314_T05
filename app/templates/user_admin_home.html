@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Admin Home</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/user_admin_home.css') }}">
+</head>
+<body>
+
+  <div class="admin-home-wrapper">
+    <div class="card">
+      <div class="card-body">
+        <h3 class="card-title">User Admin Dashboard</h3>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, msg in messages %}
+              <div class="alert alert-{{ category }} my-3">
+                {{ msg }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <p class="card-subtitle">
+          Manage user accounts and profiles efficiently.
+        </p>
+
+        <hr>
+
+        <div class="admin-actions">
+
+            <!-- View User Account -->
+          <a href="{{ url_for('view_user_account.list_accounts') }}"
+             class="admin-btn view-account">
+            <span class="icon">👥</span>
+            <span>View User Account</span>
+          </a>
+
+            <!-- Update User Account -->
+          <a href="{{ url_for('update_user_account.search_form') }}"
+             class="admin-btn update-account">
+            <span class="icon">🛠️</span>
+            <span>Update User Account</span>
+          </a>
+
+            <!-- Suspend User Account -->
+          <a href="{{ url_for('suspend_user_account.show_form') }}"
+             class="admin-btn suspend">
+            <span class="icon">⛔</span>
+            <span>Suspend User Account</span>
+          </a>
+
+            <!-- Search User Account -->
+          <a href="{{ url_for('search_user_account.search_form') }}"
+             class="admin-btn search">
+            <span class="icon">🔎</span>
+            <span>Search User Account</span>
+          </a>
+
+
+
+            {# Create User Profile #}
+          <a href="{{ url_for('create_user_profile.create_form') }}"
+             class="admin-btn create-profile">
+            <span class="icon">➕</span>
+            <span>Create User Profile</span>
+          </a>
+
+          {# View User Profile #}
+          <a href="{{ url_for('view_user_profile.list_profiles') }}"
+             class="admin-btn view-profile">
+            <span class="icon">📄</span>
+            <span>View User Profile</span>
+          </a>
+
+          {# Update User Profile #}
+          <a href="{{ url_for('update_user_profile.show_form') }}"
+             class="admin-btn update-profile">
+            <span class="icon">✏️</span>
+            <span>Update User Profile</span>
+          </a>
+          {# Search User Profile  #}
+          <a href="{{ url_for('search_user_profile.search_form') }}"
+             class="admin-btn search">
+            <span class="icon">🔍</span>
+            <span>Search User Profile</span>
+          </a>
+
+          {# Suspend User Profile  #}
+          <a href="{{ url_for('suspend_user_profile.show_suspend_page') }}"
+             class="admin-btn suspend">
+            <span class="icon">🚫</span>
+            <span>Suspend User Profile</span>
+          </a>
+
+          {# Logout  #}
+          <a href="{{ url_for('user_admin_home.logout') }}" class="admin-btn logout">
+              <span class="icon">📦</span>
+              <span>Logout</span>
+          </a>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

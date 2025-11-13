@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Platform Manager Home</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+  >
+</head>
+<body class="bg-light">
+
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card shadow-sm rounded-4">
+        <div class="card-body p-4">
+
+          <h3 class="mb-2 text-center">Platform Manager Dashboard</h3>
+          {% if username %}
+            <p class="text-muted text-center mb-3">
+              Welcome, {{ username }}.
+            </p>
+          {% else %}
+            <p class="text-muted text-center mb-3">
+              Welcome, Platform Manager.
+            </p>
+          {% endif %}
+
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              {% for category, msg in messages %}
+                <div class="alert alert-{{ category }} mb-3 text-center">
+                  {{ msg }}
+                </div>
+              {% endfor %}
+            {% endif %}
+          {% endwith %}
+
+          <hr class="my-4">
+
+          <!-- 三个主要功能按钮：先只做样式，功能稍后接 -->
+          <div class="d-grid gap-3 mb-4">
+            <a href="{{ url_for('pm_create_category.create_form') }}"
+               class="btn btn-primary">
+              Create New Category
+            </a>
+
+            <a href="{{ url_for('pm_view_categories.list_categories') }}"
+               class="btn btn-outline-primary">
+              View Service Categories
+            </a>
+
+            <a href="{{ url_for('pm_update_category.list_categories') }}"
+               class="btn btn-outline-secondary">
+              Update Service Category
+            </a>
+          </div>
+
+          <hr class="my-4">
+
+          <!-- Logout -->
+          <div class="d-grid">
+            <a href="{{ url_for('pm_home.logout') }}"
+               class="btn btn-outline-dark">
+              Log out
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

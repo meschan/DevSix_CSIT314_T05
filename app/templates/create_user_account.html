@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% set title = "Create User Account" %}
+{% block content %}
+<form method="post" action="{{ url_for('create_user.submit_form') }}" class="card">
+  <div class="row">
+    <label>Username</label>
+    <input type="text" name="username" value="{{ (form.username if form else '') | e }}" required minlength="3">
+  </div>
+  <div class="row">
+    <label>Email</label>
+    <input type="email" name="email" value="{{ (form.email if form else '') | e }}" required>
+  </div>
+  <div class="row">
+    <label>Phone number</label>
+    <input type="text" name="phone_number" value="{{ (form.phone_number if form else '') | e }}" required>
+  </div>
+  <div class="row">
+    <label>Address</label>
+    <input type="text" name="address" value="{{ (form.address if form else '') | e }}" required>
+  </div>
+  <div class="row">
+    <label>Role</label>
+    <select name="role">
+      <option value="user admin">User Admin</option>
+      <option value="pin">PIN</option>
+      <option value="csr rep">CSR Rep</option>
+      <option value="platform manager">Platform Manager</option>
+    </select>
+  </div>
+  <div class="row">
+    <label>New password</label>
+    <input type="password" name="password" required minlength="8">
+  </div>
+  <div class="row actions">
+    <button type="submit">Submit Form</button>
+    <!-- ↓ 新增：返回登录页（/admin/login） -->
+    <a href="{{ url_for('admin_login.login_form') }}" class="btn-link">Back to Login</a>
+  </div>
+</form>
+{% endblock %}

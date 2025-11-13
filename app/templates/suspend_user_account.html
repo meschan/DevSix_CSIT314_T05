@@ -1,0 +1,64 @@
+<!-- app/templates/suspend_user_account.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Suspend User Account</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+  >
+</head>
+<body class="bg-light">
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-7 col-lg-6">
+      <div class="card shadow-sm">
+        <div class="card-body p-4">
+          <h3 class="mb-4 text-center">Suspend User Account</h3>
+
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              {% for category, msg in messages %}
+                <div class="alert alert-{{ category }} text-center mb-3">{{ msg }}</div>
+              {% endfor %}
+            {% endif %}
+          {% endwith %}
+
+          <form method="post" action="{{ url_for('suspend_user_account.submit_suspend') }}">
+            <div class="mb-3">
+              <label class="form-label" for="username">Username</label>
+              <select id="username" name="username" class="form-select">
+                {% for u in users %}
+                  <option value="{{ u.username }}">
+                    {{ u.username }} ({{ u.role.value }}) — {{ u.status }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="d-grid gap-2">
+              <!-- 保留原来的 Suspend 行为 -->
+              <button type="submit" name="action" value="suspend" class="btn btn-danger">
+                Suspend
+              </button>
+
+              <!-- 新增：恢复为 Active -->
+              <button type="submit" name="action" value="activate" class="btn btn-success">
+                Activate
+              </button>
+
+              <a href="{{ url_for('user_admin_home.home') }}" class="btn btn-outline-secondary">
+                Back to Admin Home
+              </a>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

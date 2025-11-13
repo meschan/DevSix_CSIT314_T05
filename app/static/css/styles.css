@@ -1,0 +1,15 @@
+/* Minimal styles for quick start */
+:root { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+body { margin: 0; background: #f8f9fb; }
+.container { max-width: 880px; margin: 24px auto; padding: 0 16px; }
+header h1 { margin: 0 0 8px; }
+nav a { text-decoration: none; color: #0366d6; }
+.card { background: white; padding: 16px; border-radius: 10px; box-shadow: 0 4px 18px rgba(0,0,0,.06); }
+.row { display: grid; gap: 6px; margin-bottom: 12px; }
+input, select, button { padding: 10px 12px; border: 1px solid #d0d7de; border-radius: 8px; }
+button { cursor: pointer; }
+.flash { margin: 16px 0; }
+.flash-item { padding: 10px 12px; border-radius: 8px; margin-bottom: 8px; }
+.flash-item.success { background: #e6ffed; border: 1px solid #34d058; }
+.flash-item.error   { background: #ffebe9; border: 1px solid #d73a49; }
+

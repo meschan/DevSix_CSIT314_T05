@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>View Service Categories</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+  >
+</head>
+<body class="bg-light">
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-9 col-xl-8">
+      <div class="card shadow-sm">
+        <div class="card-body p-4 p-md-5">
+          <h3 class="mb-4 text-center">Service Categories</h3>
+
+          {% if categories and categories|length > 0 %}
+            <div class="table-responsive">
+              <table class="table align-middle">
+                <thead class="table-light">
+                  <tr>
+                    <th style="width: 80px;">ID</th>
+                    <th>Name</th>
+                    <th style="width: 150px;">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for c in categories %}
+                    <tr>
+                      <td>{{ c.id }}</td>
+                      <td>{{ c.name }}</td>
+                      <td>
+                        <span class="badge {% if c.status == 'Active' %}bg-success{% else %}bg-secondary{% endif %}">
+                          {{ c.status }}
+                        </span>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% else %}
+            <p class="text-center text-muted mb-0">
+              No categories yet.
+            </p>
+          {% endif %}
+
+          <div class="mt-4 d-flex gap-2 justify-content-center">
+            <a href="{{ url_for('pm_create_category.create_form') }}" class="btn btn-outline-primary">
+              Create New Category
+            </a>
+            <a href="{{ url_for('pm_home.home') }}" class="btn btn-outline-secondary">
+              Back to PM Home
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

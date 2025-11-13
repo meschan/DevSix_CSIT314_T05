@@ -1,0 +1,55 @@
+<!-- app/templates/pm_login.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Platform Manager Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+  >
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/pm_login.css') }}">
+</head>
+<body>
+
+<div class="login-card">
+  <h1 class="login-title">Platform Manager Login</h1>
+  <p class="login-subtitle">Sign in as a Platform Manager.</p>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, msg in messages %}
+        <div class="flash {{ category }}">{{ msg }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <form method="post" action="{{ url_for('pm_login.login_submit') }}">
+    <div class="mb-3">
+      <label for="username" class="form-label">Username</label>
+      <input
+        id="username"
+        type="text"
+        name="username"
+        value="{{ username or '' }}"
+        placeholder="Enter username"
+      >
+    </div>
+
+    <div class="mb-3">
+      <label for="password" class="form-label">Password</label>
+      <input
+        id="password"
+        type="password"
+        name="password"
+        placeholder="Enter password"
+      >
+    </div>
+
+    <button type="submit" class="btn-primary">LOGIN</button>
+  </form>
+</div>
+
+</body>
+</html>

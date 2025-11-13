@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Create Request - PIN</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <!-- Include a separate CSS file -->
+  <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/pin_create_request.css') }}"
+  />
+</head>
+<body class="bg-light">
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm">
+          <div class="card-body p-4 p-md-5">
+            <h2 class="mb-4 text-center">Create Request</h2>
+
+            {# flash message #}
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, msg in messages %}
+                  <div class="alert alert-{{ category }} mb-3">
+                    {{ msg }}
+                  </div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            <form method="post" action="{{ url_for('pin_create_request.create_submit') }}">
+              <!-- Title -->
+              <div class="mb-3">
+                <label for="title" class="form-label">Title</label>
+                <input
+                  type="text"
+                  id="title"
+                  name="title"
+                  class="form-control {% if errors.get('title') %}is-invalid{% endif %}"
+                  placeholder="e.g. Help with grocery shopping"
+                  value="{{ form_data.title }}"
+                />
+                {% if errors.get('title') %}
+                  <div class="invalid-feedback">
+                    {{ errors.title }}
+                  </div>
+                {% endif %}
+              </div>
+
+              <!-- Service Category -->
+              <div class="mb-3">
+                <label for="category" class="form-label">Service Category</label>
+                <select
+                  id="category"
+                  name="category"
+                  class="form-select {% if errors.get('category') %}is-invalid{% endif %}"
+                >
+                  <option value="">-- Please select --</option>
+                  {% for cat in categories %}
+                    <option value="{{ cat }}"
+                      {% if form_data.category == cat %}selected{% endif %}
+                    >{{ cat }}</option>
+                  {% endfor %}
+                </select>
+                {% if errors.get('category') %}
+                  <div class="invalid-feedback">
+                    {{ errors.category }}
+                  </div>
+                {% endif %}
+              </div>
+
+              <!-- Description -->
+              <div class="mb-4">
+                <label for="description" class="form-label">Description</label>
+                <textarea
+                  id="description"
+                  name="description"
+                  rows="4"
+                  class="form-control {% if errors.get('description') %}is-invalid{% endif %}"
+                  placeholder="Please describe what kind of help you need."
+                >{{ form_data.description }}</textarea>
+                {% if errors.get('description') %}
+                  <div class="invalid-feedback">
+                    {{ errors.description }}
+                  </div>
+                {% endif %}
+              </div>
+
+              <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary">
+                  Submit Request
+                </button>
+                <a href="{{ url_for('pin_home.home') }}" class="btn btn-outline-secondary">
+                  Back to Dashboard
+                </a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

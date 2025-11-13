@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Welcome</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+</head>
+<body class="bg-light">
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="card shadow-sm">
+          <div class="card-body p-4 p-md-5">
+            <h2 class="mb-4 text-center">Choose a Portal</h2>
+            <p class="text-muted text-center mb-4">Select your role to sign in.</p>
+
+            <div class="d-grid gap-3">
+              <!-- User Admin -->
+              <a class="btn btn-primary btn-lg"
+                 href="{{ url_for('admin_login.login_form') }}">
+                User Admin Login
+              </a>
+
+              <!-- PIN -->
+              <a class="btn btn-outline-primary btn-lg"
+                 href="{{ url_for('pin_login.login_form') }}">
+                PIN Login
+              </a>
+
+              <!-- CSR Rep -->
+              <a class="btn btn-outline-secondary btn-lg"
+                 href="{{ url_for('csr_login.login_form') }}">
+                CSR Rep Login
+              </a>
+
+
+              <!-- Platform Manager -->
+              <a class="btn btn-outline-dark btn-lg"
+                 href="{{ url_for('pm_login.login_form') }}">
+                Platform Manager Login
+              </a>
+            </div>
+
+            <hr class="my-4">
+            <div class="text-center small text-muted">
+              You can always return to this page at <code>/</code>.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

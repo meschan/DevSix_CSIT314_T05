@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>PIN Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Introducing external CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/pin_login.css') }}">
+</head>
+<body>
+  <div class="login-card">
+    <h1>PIN Login</h1>
+    <div class="subtitle">Sign in as a Person In Need.</div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-area">
+          {% for category, msg in messages %}
+            <div class="flash {{ category }}">{{ msg }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('pin_login.login_submit') }}">
+      <div class="mb-3">
+        <label for="username">Username</label>
+        <input
+          id="username"
+          type="text"
+          name="username"
+          value="{{ username or '' }}"
+          placeholder="Enter username"
+          required
+        />
+      </div>
+
+      <div class="mb-3">
+        <label for="password">Password</label>
+        <input
+          id="password"
+          type="password"
+          name="password"
+          placeholder="Enter password"
+          required
+        />
+      </div>
+
+      <button type="submit" class="btn-primary">LOGIN</button>
+    </form>
+  </div>
+</body>
+</html>
