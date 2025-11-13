@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from types import SimpleNamespace
+from typing import Iterable, List
 from typing import List
 
 from ..entity.request import Request
@@ -36,6 +37,15 @@ class CSRShortlistControl:
         return "added" if added else "exists"
 
     def get_shortlist(self, csr_user_id: int) -> List[SimpleNamespace]:
+        """Return all requests with shortlist markers for the CSR representative."""
+
+        if csr_user_id is None:
+            raise ValueError("CSR user id is required")
+
+        saved_ids = set(self._shortlist_repo.get_all_ids(csr_user_id))
+        all_requests = list(self._iter_all_requests())
+
+        # Present the newest opportunities first for easier review.
         """Return the list of requests saved by the CSR representative."""
 
         ids = self._shortlist_repo.get_all_ids(csr_user_id)
@@ -54,6 +64,19 @@ class CSRShortlistControl:
                 return created
             return getattr(req, "id", 0)
 
+        all_requests.sort(key=sort_key, reverse=True)
+        return [self._to_view_model(req, req.id in saved_ids) for req in all_requests]
+
+    def _iter_all_requests(self) -> Iterable[Request]:
+        if hasattr(self._request_repo, "list_all"):
+            yield from self._request_repo.list_all()
+            return
+        if hasattr(self._request_repo, "get_all"):
+            yield from self._request_repo.get_all()
+            return
+        yield from []
+
+    def _to_view_model(self, request: Request, is_saved: bool) -> SimpleNamespace:
         shortlisted_requests.sort(key=sort_key, reverse=True)
         return [self._to_view_model(req) for req in shortlisted_requests]
 
@@ -73,4 +96,5 @@ class CSRShortlistControl:
             status=getattr(request, "status", "Open"),
             description=getattr(request, "description", ""),
             created_at=getattr(request, "created_at", ""),
+            is_saved=is_saved,
         )
