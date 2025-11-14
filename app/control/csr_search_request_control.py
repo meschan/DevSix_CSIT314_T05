@@ -1,66 +1,91 @@
 # app/control/csr_search_request_control.py
-from datetime import datetime
-from types import SimpleNamespace
-from typing import Any
+from dataclasses import dataclass
+from typing import List, Dict, Any
 
-from ..extensions import request_repo, user_repo          # 你们全局注册的仓库实例（方案B）
+from ..entity.request_repository import InMemoryRequestRepository
+from ..entity.user_repository import UserRepository
+
+
+@dataclass
+class SearchRow:
+    id: int | str
+    title: str
+    category: str
+    owner_username: str
+    status: str
+    description: str
+    created_at: str
 
 class CSRSearchRequestControl:
-    """CSR 侧：查看所有 PIN 创建的请求"""
-    def __init__(self, req_repo=request_repo, usr_repo=user_repo):
-        self._repo = req_repo
-        self._user_repo = usr_repo
+    """
+    CSR 搜索 PIN 的 Request。
+    - 不改实体/仓库签名；
+    - 仅在提交查询时返回结果；
+    - Owner 通过 user_repo 的用户表(按 id 建索引)解析。
+    """
+    def __init__(
+        self,
+        request_repo: InMemoryRequestRepository,
+        user_repo: UserRepository,
+    ) -> None:
+        self._req_repo = request_repo
+        self._user_repo = user_repo
 
-    def list_all_requests(self):
-        # 兼容不同仓库命名
-        if hasattr(self._repo, "list_all"):
-            items = self._repo.list_all()
-        elif hasattr(self._repo, "get_all"):
-            items = self._repo.get_all()
+    def _users_by_id(self) -> Dict[int, Any]:
+        # user_repo 没有 get_by_id，用 list_all 自己建索引即可。 :contentReference[oaicite:0]{index=0}
+        return {u.id: u for u in self._user_repo.list_all()}
+
+    def search(self, mode: str, keyword: str) -> List[SearchRow]:
+        mode = (mode or "").lower().strip()
+        q = (keyword or "").strip()
+        if not mode or not q:
+            # 没有提交有效查询 -> 不返回任何结果（页面显示为空）
+            return []
+
+        # 取全量，再在内存中过滤（不改仓库层接口）。 :contentReference[oaicite:1]{index=1}
+        items = self._req_repo.list_all()
+
+        # 解析 Owner
+        users = self._users_by_id()
+
+        def owner_name(pin_user_id: int | None) -> str:
+            u = users.get(pin_user_id or -1)
+            return (u.username if u else "") or ""
+
+        # 统一取字段的工具
+        def get(obj, name, default=""):
+            return getattr(obj, name, default) or default
+
+        # 归一化类别字段（兼容你历史字段名）
+        def cat_of(r) -> str:
+            return (get(r, "category") or get(r, "category_name")).strip()
+
+        q_low = q.lower()
+        if mode == "category":
+            items = [r for r in items if cat_of(r).lower() == q_low]
+        elif mode == "username":
+            # 与 owner 用户名比对（大小写不敏感）
+            items = [
+                r for r in items
+                if owner_name(get(r, "pin_user_id")).lower() == q_low
+            ]
+        elif mode == "title":
+            items = [r for r in items if q_low in get(r, "title", "").lower()]
         else:
-            items = []
+            # 未知模式 -> 返回空
+            return []
 
-        # Ensure deterministic ordering for the UI while keeping repository order intact
-        view_models = [self._to_view_model(item) for item in items]
-
-        def sort_key(row: SimpleNamespace):
-            created = getattr(row, "created_at", None)
-            if isinstance(created, datetime):
-                return created
-            return getattr(row, "id", 0)
-
-        return sorted(view_models, key=sort_key, reverse=True)
-
-        return sorted(view_models, key=sort_key, reverse=True)
-
-        return [self._to_view_model(item) for item in items]
-
-    def _to_view_model(self, obj: Any) -> SimpleNamespace:
-        if isinstance(obj, dict):
-            data = obj
-            pick = lambda *names, default="": next((data[n] for n in names if n in data and data[n] is not None), default)
-        else:
-            pick = lambda *names, default="": next((getattr(obj, n) for n in names if hasattr(obj, n) and getattr(obj, n) is not None), default)
-
-        owner = pick("owner_username", "pin_username", "username", default="") or self._resolve_owner_by_id(
-            pick("owner_id", "user_id", "pin_user_id", default=None)
-        )
-
-        return SimpleNamespace(
-            id=pick("id", "request_id", default=""),
-            title=pick("title", "name", default=""),
-            category=pick("category", "category_name", default=""),
-            display_owner=owner or "",
-            pin_user_id=pick("pin_user_id", "user_id", default=""),
-            status=pick("status", default="Open"),
-            description=pick("description", default=""),
-            created_at=pick("created_at", default=""),
-        )
-
-    def _resolve_owner_by_id(self, uid):
-        if uid is None or not hasattr(self._user_repo, "get_by_id"):
-            return ""
-        user = self._user_repo.get_by_id(uid)
-        if not user:
-            return ""
-        return getattr(user, "username", "") or getattr(user, "email", "")
+        rows: List[SearchRow] = []
+        for r in items:
+            rows.append(
+                SearchRow(
+                    id=get(r, "id", ""),
+                    title=get(r, "title", ""),
+                    category=cat_of(r),
+                    owner_username=owner_name(get(r, "pin_user_id")),
+                    status=get(r, "status", "Open"),
+                    description=get(r, "description", ""),
+                    created_at=str(get(r, "created_at", "")),
+                )
+            )
+        return rows

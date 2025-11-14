@@ -1,5 +1,6 @@
-from typing import Dict, List
+from typing import Dict, List, Optional, Any
 from .request import Request
+from datetime import datetime, timedelta
 
 class InMemoryRequestRepository:
     def __init__(self) -> None:
@@ -56,3 +57,24 @@ class InMemoryRequestRepository:
         或模板里有人用 get_all 的调用方式。
         """
         return self.list_all()
+
+    def get_by_id(self, req_id: int) -> Request | None:
+        return self._items.get(req_id)
+
+    def mark_matched(self, request_id: int, matched_to_username: str) -> bool:
+        r = self._items.get(request_id)
+        if not r:
+            return False
+        r.matched_to_username = matched_to_username
+        r.matched_at = datetime.utcnow()  # <—— 关键：写入匹配时间
+        return True
+
+    def list_matched_since(self, since_dt: datetime) -> List[Request]:
+        return sorted(
+            [
+                r for r in self._items.values()
+                if r.matched_to_username and r.matched_at and r.matched_at >= since_dt
+            ],
+            key=lambda x: x.matched_at,
+            reverse=True
+        )

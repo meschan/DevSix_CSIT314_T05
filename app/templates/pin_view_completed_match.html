@@ -1,0 +1,72 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Completed Match (View)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container py-5">
+  <h1 class="h3 mb-4">Matched to me</h1>
+
+  {% if not matched_to_me %}
+    <div class="alert alert-info">No matched requests assigned to you.</div>
+  {% else %}
+    <div class="table-responsive mb-5">
+      <table class="table table-hover align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>ID</th><th>Title</th><th>Category</th><th>Owner</th><th>Matched To</th><th>Created</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for r in matched_to_me %}
+          <tr>
+            <td>{{ r.id }}</td>
+            <td>{{ r.title }}</td>
+            <td>{{ r.category }}</td>
+            <td>{{ r.owner }}</td>
+            <td>{{ r.matched_to }}</td>
+            <td>{{ r.created }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+
+  <h2 class="h3 mb-3">My requests matched to others</h2>
+  {% if not my_matched %}
+    <div class="alert alert-info">None of your requests have been matched to other PINs.</div>
+  {% else %}
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>ID</th><th>Title</th><th>Category</th><th>Owner</th><th>Matched To</th><th>Created</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for r in my_matched %}
+          <tr>
+            <td>{{ r.id }}</td>
+            <td>{{ r.title }}</td>
+            <td>{{ r.category }}</td>
+            <td>{{ r.owner }}</td>
+            <td>{{ r.matched_to }}</td>
+            <td>{{ r.created }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+
+  <div class="mt-4">
+    <a href="{{ url_for('pin_home.home') }}" class="btn btn-outline-secondary">Back to PIN Home</a>
+  </div>
+</div>
+</body>
+</html>

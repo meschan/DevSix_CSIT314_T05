@@ -43,12 +43,12 @@
           <!-- 三个主要功能按钮：先只做样式，功能稍后接 -->
           <div class="d-grid gap-3 mb-4">
             <a href="{{ url_for('pm_create_category.create_form') }}"
-               class="btn btn-primary">
+               class="btn btn-outline-secondary">
               Create New Category
             </a>
 
             <a href="{{ url_for('pm_view_categories.list_categories') }}"
-               class="btn btn-outline-primary">
+               class="btn btn-outline-secondary">
               View Service Categories
             </a>
 
@@ -56,6 +56,34 @@
                class="btn btn-outline-secondary">
               Update Service Category
             </a>
+
+            <a href="{{ url_for('pm_daily_report.daily') }}"
+               class="btn btn-outline-secondary">
+              Generate Daily Report
+            </a>
+
+            <a href="{{ url_for('pm_weekly_report.weekly') }}"
+               class="btn btn-outline-secondary">
+              Generate Weekly Report
+            </a>
+
+            <a href="{{ url_for('pm_monthly_report.monthly') }}"
+               class="btn btn-outline-secondary">
+              Generate Monthly Report
+            </a>
+
+            <a href="{{ url_for('pm_delete_report.list_reports') }}"
+               class="btn btn-outline-danger">
+              Delete Reports
+            </a>
+
+            <a href="{{ url_for('pm_save_report.list_reports') }}"
+               class="btn btn-outline-primary btn-sm">
+              Save Reports (CSV)
+            </a>
+
+
+
           </div>
 
           <hr class="my-4">
