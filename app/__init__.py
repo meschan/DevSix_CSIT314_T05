@@ -1,4 +1,6 @@
 from flask import Flask
+
+from .boundary import csr_search_shortlisted_request
 from .config import Config
 from .entity.user_repository import InMemoryUserRepository
 
@@ -72,6 +74,18 @@ def create_app() -> Flask:
     from .boundary.pin_search_request import bp as pin_search_request_bp
     app.register_blueprint(pin_search_request_bp, url_prefix="/pin")
 
+    from .boundary.pin_view_request_views import bp as pin_request_views_bp
+    app.register_blueprint(pin_request_views_bp, url_prefix="/pin")
+
+    from .boundary.pin_view_shortlisted_request import bp as pin_view_shortlisted_request_bp
+    app.register_blueprint(pin_view_shortlisted_request_bp, url_prefix="/pin")
+
+    from .boundary.pin_search_completed_match import bp as pin_search_match_bp
+    app.register_blueprint(pin_search_match_bp, url_prefix="/pin")
+
+    from .boundary.pin_view_completed_match import bp as pin_view_completed_match_bp
+    app.register_blueprint(pin_view_completed_match_bp, url_prefix="/pin")
+
     # PM
     from .boundary.pm_login import bp as pm_login_bp
     app.register_blueprint(pm_login_bp, url_prefix="/pm")
@@ -88,6 +102,21 @@ def create_app() -> Flask:
     from .boundary.pm_update_category import bp as pm_update_category_bp
     app.register_blueprint(pm_update_category_bp, url_prefix="/pm")
 
+    from .boundary.pm_generate_daily_report import bp as pm_daily_report_bp
+    app.register_blueprint(pm_daily_report_bp, url_prefix="/pm")
+
+    from .boundary.pm_generate_weekly_report import bp as pm_weekly_report_bp
+    app.register_blueprint(pm_weekly_report_bp, url_prefix="/pm")
+
+    from .boundary.pm_generate_monthly_report import bp as pm_monthly_report_bp
+    app.register_blueprint(pm_monthly_report_bp, url_prefix="/pm")
+
+    from .boundary.pm_delete_report import bp as pm_delete_report_bp
+    app.register_blueprint(pm_delete_report_bp, url_prefix="/pm")
+
+    from .boundary.pm_save_report import bp as pm_save_report_bp
+    app.register_blueprint(pm_save_report_bp, url_prefix="/pm")
+
     # CSR
     from .boundary.csr_login import bp as csr_login_bp
     app.register_blueprint(csr_login_bp, url_prefix="/csr")
@@ -98,8 +127,23 @@ def create_app() -> Flask:
     from .boundary.csr_search_request import bp as csr_search_request_bp
     app.register_blueprint(csr_search_request_bp, url_prefix="/csr")
 
-    from .boundary.csr_shortlist import bp as csr_shortlist_bp
-    app.register_blueprint(csr_shortlist_bp, url_prefix="/csr")
+    from .boundary.csr_view_volunteer_request import bp as csr_view_volunteer_bp
+    app.register_blueprint(csr_view_volunteer_bp, url_prefix="/csr")
+
+    from .boundary.csr_save_volunteer_request import bp as csr_save_request_bp
+    app.register_blueprint(csr_save_request_bp, url_prefix="/csr")
+
+    from .boundary.csr_view_shortlisted_request import bp as csr_view_shortlisted_request_bp
+    app.register_blueprint(csr_view_shortlisted_request_bp, url_prefix="/csr")
+
+    from .boundary.csr_search_shortlisted_request import bp as csr_search_shortlisted_bp
+    app.register_blueprint(csr_search_shortlisted_bp, url_prefix="/csr")
+
+    from .boundary.csr_search_completed_match import bp as csr_search_completed_match_bp
+    app.register_blueprint(csr_search_completed_match_bp, url_prefix="/csr")
+
+    from .boundary.csr_view_completed_match import bp as csr_view_completed_bp
+    app.register_blueprint(csr_view_completed_bp)
 
     # Jinja globals / filters can be added here if needed
     return app
