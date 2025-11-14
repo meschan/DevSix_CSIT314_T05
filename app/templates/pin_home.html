@@ -39,6 +39,15 @@
                class="btn btn-outline-danger">Delete Request</a>
             <a href="{{ url_for('pin_search_request.search_form') }}"
                class="btn btn-outline-info">Search Request</a>
+            <a href="{{ url_for('pin_view_request_views.show_views') }}"
+               class="btn btn-outline-info">View My Request Views</a>
+            <a href="{{ url_for('pin_view_shortlisted_request.show_saved') }}"
+               class="btn btn-outline-primary">View Shortlisted Requests (Saved Count)</a>
+            <a href="{{ url_for('pin_search_completed_match.search_form') }}"
+               class="btn btn-outline-primary">Search Completed Match</a>
+            <a href="{{ url_for('pin_view_completed_match.view_page') }}"
+               class="btn btn-outline-primary">View Completed Match</a>
+
           </div>
 
           <hr>
