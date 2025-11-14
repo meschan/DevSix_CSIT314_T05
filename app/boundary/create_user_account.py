@@ -7,8 +7,8 @@ from ..extensions import user_repo
 
 bp = Blueprint("create_user", __name__, template_folder="../templates")
 
-# For now we keep a single repo instance here.
-# In a bigger app, inject via app factory / DI container.
+
+#done
 
 _control = CreateUserAccountControl(user_repo)
 
